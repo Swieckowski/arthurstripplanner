@@ -2,8 +2,9 @@ var express = require("express");
 var morgan = require("morgan");
 var bodyParser = require("body-parser");
 var path = require("path");
+var api = require("./api");
 
-var db = require("./models").db;
+var db = require("../models").db;
 
 var app = express();
 
@@ -15,6 +16,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // static file-serving middleware
 app.use(express.static(path.join(__dirname, "..", "public")));
+
+app.use('/api', api);
 
 // failed to catch req above means 404, forward to error handler
 app.use(function(req, res, next) {

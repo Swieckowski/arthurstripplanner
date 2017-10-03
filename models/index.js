@@ -17,7 +17,7 @@ const Hotel = db.define('hotel', {
 
 const Activity = db.define('activity', {
 	name: Sequelize.STRING,
-	age_range: Sequelize.INTEGER
+	age_range: Sequelize.STRING
 })
 
 const Restaurant = db.define('restaurant', {
@@ -29,3 +29,5 @@ const Restaurant = db.define('restaurant', {
 Hotel.belongsTo(Place);
 Restaurant.belongsTo(Place);
 Activity.belongsTo(Place);
+
+module.exports = { db, Place, Hotel, Activity, Restaurant }

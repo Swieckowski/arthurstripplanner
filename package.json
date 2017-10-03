@@ -1,0 +1,26 @@
+{
+  "name": "trip-planner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avillarreal01/trip-planner.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/avillarreal01/trip-planner/issues"
+  },
+  "homepage": "https://github.com/avillarreal01/trip-planner#readme",
+  "devDependencies": {
+    "webpack": "^3.6.0"
+  },
+  "dependencies": {
+    "mapbox-gl": "^0.40.1"
+  }
+}

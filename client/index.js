@@ -1,5 +1,7 @@
 const mapboxgl = require("mapbox-gl");
-const markerFactory = require('./marker.js');
+const markerFactory = require('./marker.js').markerFactory;
+const selector = require('./marker.js').selector;
+
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYXZpbGxhcnJlYWwwMSIsImEiOiJjajhicnJ4ZXUwMWIyMnFybG8ydmk1ajdpIn0.zFonWc7d_835Jqa1S2_RUg';
 
@@ -10,13 +12,15 @@ const map = new mapboxgl.Map({
   style: "mapbox://styles/mapbox/streets-v10" // mapbox has lots of different map styles available.
 });
 
-const marker = markerFactory('hotel', -74.009151, 40.705086);
-marker.addTo(map);
-
 const hotelsSelect = document.getElementById('hotels');
 const restaurantsSelect = document.getElementById('restaurants');
 const activitiesSelect = document.getElementById('activities');
 let attractions;
+const itinerary = {
+  activities: [],
+  hotels: [],
+  restaurants: []
+};
 
 fetch('/api/attractions')
 .then(result => result.json())
@@ -47,3 +51,43 @@ function populate (attractions) {
     activitiesSelect.append(opt);
   });
 }
+
+document.getElementById('hotel-button')
+  .addEventListener('click', () => {
+
+    if (selector(itinerary, "hotels", hotelsSelect.value) === null){
+      const hotel = selector(attractions,"hotels", hotelsSelect.value);
+      const marker = markerFactory('hotel', hotel.place.location);
+      marker.addTo(map);
+      itinerary.hotels.push(hotel);
+      console.log(itinerary.hotels);
+    }
+  });
+
+document.getElementById('restaurant-button')
+  .addEventListener('click', () => {
+    if (selector(itinerary, "restaurants", restaurantsSelect.value) === null){
+      const restaurant = selector(attractions,"restaurants", restaurantsSelect.value);
+      const marker = markerFactory('restaurant', restaurant.place.location);
+      marker.addTo(map);
+      itinerary.restaurants.push(restaurant);
+      console.log(itinerary.restaurants);
+    }
+  });
+
+document.getElementById('activity-button')
+  .addEventListener('click', () => {
+    if (selector(itinerary, "activities", activitiesSelect.value) === null){
+      const activity = selector(attractions,"activities", activitiesSelect.value);
+      const marker = markerFactory('activity', activity.place.location);
+      marker.addTo(map);
+      itinerary.activities.push(activity);
+      console.log(itinerary.activities);
+    }
+  });
+
+
+
+
+
+

@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -528,14 +528,54 @@ module.exports={"$version":8,"$root":{"version":{"required":true,"type":"enum","
 
 
 //# sourceMappingURL=mapbox-gl.js.map
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const mapboxgl = __webpack_require__(0);
-const markerFactory = __webpack_require__(3);
+
+function markerFactory (type, LonLatarr) {
+  const marker = document.createElement('div');
+  marker.style.width = "32px";
+  marker.style.height = "39px";
+
+  if (type === 'activity') {
+    marker.style.backgroundImage = 'url(http://i.imgur.com/WbMOfMl.png)';
+  } else if (type === 'hotel') {
+    marker.style.backgroundImage = 'url(http://i.imgur.com/D9574Cu.png)';
+  } else if (type === 'restaurant') {
+    marker.style.backgroundImage = 'url(http://i.imgur.com/cqR6pUI.png)';
+  }
+
+  return new mapboxgl.Marker(marker).setLngLat(LonLatarr);
+}
+
+function selector (attractions, type, id){
+  const attractionArr = attractions[type];
+  for (var i = 0; i < attractionArr.length; i++) {
+    if(attractionArr[i].id === parseInt(id)){
+      return attractionArr[i];
+    }
+  }
+  return null;
+}
+
+module.exports = {
+  markerFactory: markerFactory,
+  selector: selector
+}
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const mapboxgl = __webpack_require__(0);
+const markerFactory = __webpack_require__(1).markerFactory;
+const selector = __webpack_require__(1).selector;
+
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYXZpbGxhcnJlYWwwMSIsImEiOiJjajhicnJ4ZXUwMWIyMnFybG8ydmk1ajdpIn0.zFonWc7d_835Jqa1S2_RUg';
 
@@ -546,13 +586,15 @@ const map = new mapboxgl.Map({
   style: "mapbox://styles/mapbox/streets-v10" // mapbox has lots of different map styles available.
 });
 
-const marker = markerFactory('hotel', -74.009151, 40.705086);
-marker.addTo(map);
-
 const hotelsSelect = document.getElementById('hotels');
 const restaurantsSelect = document.getElementById('restaurants');
 const activitiesSelect = document.getElementById('activities');
 let attractions;
+const itinerary = {
+  activities: [],
+  hotels: [],
+  restaurants: []
+};
 
 fetch('/api/attractions')
 .then(result => result.json())
@@ -584,8 +626,49 @@ function populate (attractions) {
   });
 }
 
+document.getElementById('hotel-button')
+  .addEventListener('click', () => {
+
+    if (selector(itinerary, "hotels", hotelsSelect.value) === null){
+      const hotel = selector(attractions,"hotels", hotelsSelect.value);
+      const marker = markerFactory('hotel', hotel.place.location);
+      marker.addTo(map);
+      itinerary.hotels.push(hotel);
+      console.log(itinerary.hotels);
+    }
+  });
+
+document.getElementById('restaurant-button')
+  .addEventListener('click', () => {
+    if (selector(itinerary, "restaurants", restaurantsSelect.value) === null){
+      const restaurant = selector(attractions,"restaurants", restaurantsSelect.value);
+      const marker = markerFactory('restaurant', restaurant.place.location);
+      marker.addTo(map);
+      itinerary.restaurants.push(restaurant);
+      console.log(itinerary.restaurants);
+    }
+  });
+
+document.getElementById('activity-button')
+  .addEventListener('click', () => {
+    if (selector(itinerary, "activities", activitiesSelect.value) === null){
+      const activity = selector(attractions,"activities", activitiesSelect.value);
+      const marker = markerFactory('activity', activity.place.location);
+      marker.addTo(map);
+      itinerary.activities.push(activity);
+      console.log(itinerary.activities);
+    }
+  });
+
+
+
+
+
+
+
+
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports) {
 
 var g;
@@ -609,31 +692,6 @@ try {
 // easier to handle this case. if(!global) { ...}
 
 module.exports = g;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const mapboxgl = __webpack_require__(0);
-
-function markerFactory (type, long, lat) {
-  const marker = document.createElement('div');
-  marker.style.width = "32px";
-  marker.style.height = "39px";
-
-  if (type === 'activity') {
-    marker.style.backgroundImage = 'url(http://i.imgur.com/WbMOfMl.png)';
-  } else if (type === 'hotel') {
-    marker.style.backgroundImage = 'url(http://i.imgur.com/D9574Cu.png)';
-  } else if (type === 'restaurant') {
-    marker.style.backgroundImage = 'url(http://i.imgur.com/cqR6pUI.png)';
-  }
-
-  return new mapboxgl.Marker(marker).setLngLat([long, lat]);
-}
-
-module.exports = markerFactory;
 
 
 /***/ })

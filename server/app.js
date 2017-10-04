@@ -13,10 +13,11 @@ app.use(morgan('tiny'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/api', api);
-
 // static file-serving middleware
 app.use(express.static(path.join(__dirname, "..", "public")));
+app.use(express.static(path.join(__dirname, "..", "node_modules/mapbox-gl/dist")));
+
+app.use('/api', api);
 
 // failed to catch req above means 404, forward to error handler
 app.use(function(req, res, next) {

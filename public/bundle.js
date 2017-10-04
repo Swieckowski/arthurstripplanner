@@ -549,6 +549,12 @@ const map = new mapboxgl.Map({
 const marker = markerFactory('hotel', -74.009151, 40.705086);
 marker.addTo(map);
 
+fetch('/api/attractions')
+.then(result => result.json())
+.then(data => {
+  console.log(data);
+})
+.catch(console.error);
 
 /***/ }),
 /* 2 */

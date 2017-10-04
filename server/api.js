@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {db, Hotel, Place, Restaurant, Activity} = require("../models");
 
-router.get('/', function(req, res, next) {
+router.get('/attractions', function(req, res, next) {
     var allAttractions = {};
     Hotel.findAll({ include: [{ all: true }]})
     .then(function(hotels) {
